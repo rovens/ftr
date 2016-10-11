@@ -14,7 +14,7 @@ namespace FTR.Tests
         public void SetUp()
         {
             _mockConsole = Substitute.For<IOutput>();
-            _gameState = Substitute.For<IGameState>();
+            _gameState = new GameState();
             _testFixture = new UiPrinter(_mockConsole, _gameState);
         }
 
@@ -27,14 +27,11 @@ namespace FTR.Tests
             _testFixture.DisplayNumberHistoryFrequency(TimeSpan.FromSeconds(10));
         }
 
-        private void WhenTheGameStateChangesToPauseIs(bool state)
-        {
-            _testFixture.OnGameStateChange(this, new GameStateEventArgs {IsPaused = state});
-        }
+
 
         private void ThenTheConsoleWillPrint(string text)
         {
-            _mockConsole.Received().WriteLine(text);
+            _mockConsole.Received().WriteLine(Arg.Is(text));
         }
 
         private void WhenTheOutputsOnFibonacciNumberEventIsCalled()
@@ -57,17 +54,55 @@ namespace FTR.Tests
         {
             this
                 .Given(x => GivenAGameHasBeenStarted())
-                .When(x => WhenTheGameStateChangesToPauseIs(true))
+                .When(x => WhenTheGameStateChangesTo("halt"))
+
                 .Then(x => ThenTheConsoleWillPrint("timer halted"))
+           
                 .BDDfy();
         }
 
         [Test]
-        public void ItShouldPrintTImerResumedWhenTheGameStateChangesToPaused()
+        public void ItShouldPrintTheResultsAndAGoodbyeMessageOnQutting()
+        {
+            this
+               .Given(x => GivenAGameHasBeenStarted())
+               .And(x => AndTheUserHasEntered(1))
+               .And(x => AndTheUserHasEntered(1))
+               .And(x => AndTheUserHasEntered(2))
+               .When(x => WhenTheGameStateChangesTo("quitting"))
+               .Then(x => ThenTheConsoleWillPrint("1:2, 2:1"))
+               .And(x => ThenTheConsoleWillPrint("Thanks for playing, press any key to exit."))
+               .BDDfy();
+        }
+
+        private void WhenTheGameStateChangesTo(string state)
+        {
+            switch (state)
+            {
+                case "quitting":
+                    _testFixture.OnGameStateChange(this, new GameStateEventArgs { IsQuitting = true});
+                    break;
+                case "halt":
+                    _testFixture.OnGameStateChange(this, new GameStateEventArgs { IsPaused = true });
+                    break;
+                case "resume":
+                    _testFixture.OnGameStateChange(this, new GameStateEventArgs { IsQuitting = false });
+                    break;
+
+            }
+        }
+
+        private void AndTheUserHasEntered(int input)
+        {
+            _gameState.UpdateState(input);
+        }
+
+        [Test]
+        public void ItShouldPrintTimerResumedWhenTheGameStateChangesToPaused()
         {
             this
                 .Given(x => GivenAGameHasBeenStarted())
-                .When(x => WhenTheGameStateChangesToPauseIs(false))
+                .When(x => WhenTheGameStateChangesTo("resume"))
                 .Then(x => ThenTheConsoleWillPrint("timer resumed"))
                 .BDDfy();
         }

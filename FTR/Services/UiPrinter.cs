@@ -37,6 +37,8 @@ namespace FTR.Services
         {
             if (gameStateEventArgs.IsQuitting)
             {
+                _printSeriesTimer.Stop();
+                DisplaySeries(this, null);
                 DisplayGoodbye();
                 return;
             }
@@ -59,7 +61,7 @@ namespace FTR.Services
 
         public void DisplayGoodbye()
         {
-            Console.WriteLine("Thanks for playing, press any key to exit.");
+            _output.WriteLine("Thanks for playing, press any key to exit.");
         }
 
         public void DisplayNumberHistoryFrequency(TimeSpan timeSpan)
