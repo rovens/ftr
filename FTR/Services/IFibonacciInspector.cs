@@ -1,7 +1,9 @@
-﻿namespace FTR
+﻿using System.Numerics;
+
+namespace FTR
 {
     public interface IFibonacciInspector
     {
-        bool IsFibonacci(int newNumber);
+        bool IsFibonacci(BigInteger newNumber);
     }
 }

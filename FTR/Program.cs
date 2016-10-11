@@ -1,28 +1,19 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using Autofac;
-using Autofac.Core;
 using FTR.Services;
 using Serilog;
 
 namespace FTR
 {
-    class Program
+    internal class Program
     {
-
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             IContainer container = null;
             try
             {
-
-
                 container = ConfigureAutofac();
 
                 var gameMamager = container.Resolve<IGameManager>();
@@ -39,8 +30,8 @@ namespace FTR
         }
 
 
-
-        private static void RegisterNamespaceInAssembly(ContainerBuilder builder, string namespaceEndingWith, Assembly assembly)
+        private static void RegisterNamespaceInAssembly(ContainerBuilder builder, string namespaceEndingWith,
+            Assembly assembly)
         {
             var typesToRegister = assembly.GetTypes()
                 .Where(x => !x.IsAbstract)
@@ -49,7 +40,6 @@ namespace FTR
                 .ToList();
 
             typesToRegister.ForEach(x => builder.RegisterType(x).AsImplementedInterfaces());
-
         }
 
         private static void ConfigureLogging(ContainerBuilder builder)
@@ -63,12 +53,11 @@ namespace FTR
 
         private static IContainer ConfigureAutofac()
         {
-            var builder = new Autofac.ContainerBuilder();
+            var builder = new ContainerBuilder();
             RegisterNamespaceInAssembly(builder, "Services", Assembly.GetExecutingAssembly());
+            builder.RegisterType<GameState>().SingleInstance().AsImplementedInterfaces();
             ConfigureLogging(builder);
             return builder.Build();
         }
     }
-
-
 }

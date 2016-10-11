@@ -1,31 +1,32 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 
 namespace FTR.Services
 {
     public class FibonacciInspector : IFibonacciInspector
     {
-        private IEnumerable<int> _fibonacciSequence;
+        private readonly IEnumerable<BigInteger> _fibonacciSequence;
 
         public FibonacciInspector()
         {
-            _fibonacciSequence = Fibonacci(100);
+            _fibonacciSequence = Fibonacci(1000);
         }
 
 
-        public bool IsFibonacci(int newNumber)
+        public bool IsFibonacci(BigInteger newNumber)
         {
             return _fibonacciSequence.Any(x => x == newNumber);
         }
 
-        private static IEnumerable<int> Fibonacci(int n)
+        public IEnumerable<BigInteger> Fibonacci(int n)
         {
-            IList<int> sequence = new List<int>();
-            int first = 0, second = 1;
+            IList<BigInteger> sequence = new List<BigInteger>();
+            BigInteger first = 0, second = 1;
             int c;
             for (c = 0; c < n; c++)
             {
-                int next;
+                BigInteger next;
                 if (c <= 1)
                     next = c;
                 else
@@ -35,11 +36,8 @@ namespace FTR.Services
                     second = next;
                 }
                 sequence.Add(next);
-     
             }
             return sequence;
         }
-
-
     }
 }
