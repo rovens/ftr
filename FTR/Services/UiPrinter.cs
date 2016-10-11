@@ -17,17 +17,6 @@ namespace FTR.Services
 //        }
 //    }
 
-    public class GameStateEventArgs : EventArgs
-    {
-        public GameStateEventArgs()
-        {
-            IsQuitting = false;
-            IsPaused = false;
-        }
-        public bool IsQuitting { get; set; }
-        public bool IsPaused { get; set; }
-    }
-
     public class UiPrinter : IUiPrinter
     {
         private readonly IGameState _gameState;
