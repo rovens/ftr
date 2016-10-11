@@ -1,3 +1,4 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/c40seqliybima4rq?svg=true)](https://ci.appveyor.com/project/rovens/ftr)
 # ftr
 
 1. On startup, the program will prompt the user for the number of seconds (X) between outputting the frequency of each number to the screen.
