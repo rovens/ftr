@@ -4,18 +4,6 @@ using System.Timers;
 
 namespace FTR.Services
 {
-//    public interface IOutput
-//    {
-//        void WriteLine(string text);
-//    }
-//
-//    public class Output : IOutput
-//    {
-//        public void WriteLine(string text)
-//        {
-//         Console.WriteLine(text);   
-//        }
-//    }
 
     public class UiPrinter : IUiPrinter
     {
