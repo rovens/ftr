@@ -7,19 +7,36 @@ namespace FTR.Services
     {
         private readonly IFibonacciInspector _fibonacciInspector;
         private readonly IGameState _gameState;
+        private readonly IOutput _output;
         private readonly IUiPrinter _printer;
-        private bool _paused;
+        internal bool Paused;
 
 
-        public GameManager(IUiPrinter printer, IFibonacciInspector fibonacciInspector, IGameState gameState)
+        public GameManager(IUiPrinter printer, IFibonacciInspector fibonacciInspector, IGameState gameState, IOutput output)
         {
             _printer = printer;
             _fibonacciInspector = fibonacciInspector;
             _gameState = gameState;
+            _output = output;
 
             OnFibonacciNumber += printer.OnFibonacciNumber;
             OnGameStateChanged += printer.OnGameStateChange;
-            _paused = false;
+            OnGameStateChanged += GameStateChanged;
+            Paused = false;
+        }
+
+        private void GameStateChanged(object sender, GameStateEventArgs e)
+        {
+
+            if (e.IsQuitting)
+            {
+                _output.ReadLine();
+                Environment.Exit(0);
+            }
+            else
+            {
+                Paused = e.IsPaused;
+            }
         }
 
         public event EventHandler<EventArgs> OnFibonacciNumber;
@@ -29,13 +46,13 @@ namespace FTR.Services
             CaptureSeriesPrintInterval();
             while (true)
             {
-                var input = Console.ReadLine();
+                var input = _output.ReadLine();
 
                 CheckForGameCommand(input);
                 BigInteger number;
-                if (BigInteger.TryParse(input, out number) && !_paused)
+                if (BigInteger.TryParse(input, out number) && !Paused)
                 {
-                    if (_fibonacciInspector.IsFibonacci(number) && !_paused)
+                    if (_fibonacciInspector.IsFibonacci(number) && !Paused)
                     {
                         OnFibonacciNumber(this, EventArgs.Empty);
                     }
@@ -62,35 +79,26 @@ namespace FTR.Services
             }
         }
 
-        private void CheckForGameCommand(string input)
+        internal void CheckForGameCommand(string input)
         {
             switch (input.ToLower())
             {
                 case "quit":
-                    OnGameStateChanged(this, new GameStateEventArgs {IsPaused = true});
-                    _printer.DisplayGoodbye();
-                    Console.ReadLine();
-                    Environment.Exit(0);
+                    OnGameStateChanged(this, new GameStateEventArgs {IsQuitting = true});   
                     break;
-                case "pause":
-                    if (_paused)
+                case "halt":
+                    if (Paused)
                     {
                         return;
                     }
                     OnGameStateChanged(this, new GameStateEventArgs {IsPaused = true});
-                    _paused = true;
-
                     break;
                 case "resume":
-                    if (!_paused)
+                    if (!Paused)
                     {
                         return;
                     }
                     OnGameStateChanged(this, new GameStateEventArgs {IsPaused = false});
-                    _paused = false;
-
-                    break;
-                default:
                     break;
             }
         }

@@ -68,9 +68,9 @@
     <Compile Include="Services\FibonacciInspector.cs" />
     <Compile Include="Services\GameManager.cs" />
     <Compile Include="Services\IGameManager.cs" />
-    <Compile Include="Services\IOutputWriter.cs" />
+    <Compile Include="Services\IOutput.cs" />
     <Compile Include="Services\IUiPrinter.cs" />
-    <Compile Include="Services\OutputWriter.cs" />
+    <Compile Include="Services\Output.cs" />
     <Compile Include="Services\UiPrinter.cs" />
   </ItemGroup>
   <ItemGroup>

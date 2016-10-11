@@ -1,7 +1,8 @@
 namespace FTR.Services
 {
-    public interface IOutputWriter
+    public interface IOutput
     {
         void WriteLine(string text);
+        string ReadLine();
     }
 }

@@ -4,12 +4,12 @@ using System.Timers;
 
 namespace FTR.Services
 {
-//    public interface IOutputWriter
+//    public interface IOutput
 //    {
 //        void WriteLine(string text);
 //    }
 //
-//    public class OutputWriter : IOutputWriter
+//    public class Output : IOutput
 //    {
 //        public void WriteLine(string text)
 //        {
@@ -19,39 +19,51 @@ namespace FTR.Services
 
     public class GameStateEventArgs : EventArgs
     {
+        public GameStateEventArgs()
+        {
+            IsQuitting = false;
+            IsPaused = false;
+        }
+        public bool IsQuitting { get; set; }
         public bool IsPaused { get; set; }
     }
 
     public class UiPrinter : IUiPrinter
     {
         private readonly IGameState _gameState;
-        private readonly IOutputWriter _outputWriter;
+        private readonly IOutput _output;
         private Timer _printSeriesTimer;
 
-        public UiPrinter(IOutputWriter outputWriter, IGameState gameState)
+        public UiPrinter(IOutput output, IGameState gameState)
         {
-            _outputWriter = outputWriter;
+            _output = output;
             _gameState = gameState;
         }
 
         public void DisplayPause()
         {
-            _outputWriter.WriteLine("timer halted");
+            _output.WriteLine("timer halted");
         }
 
         public void DisplayRequestForSeriesOutput()
         {
-            _outputWriter.WriteLine(
+            _output.WriteLine(
                 "Please input the number of time in seconds between emitting numbers and their frequency");
         }
 
         public void OnFibonacciNumber(object sender, EventArgs eventArgs)
         {
-            _outputWriter.WriteLine("FIB");
+            _output.WriteLine("FIB");
         }
 
         public void OnGameStateChange(object sender, GameStateEventArgs gameStateEventArgs)
         {
+            if (gameStateEventArgs.IsQuitting)
+            {
+                DisplayGoodbye();
+                return;
+            }
+
             if (_printSeriesTimer == null)
             {
                 return;
@@ -82,13 +94,13 @@ namespace FTR.Services
 
         public void DisplayResumed()
         {
-            _outputWriter.WriteLine("timer resumed");
+            _output.WriteLine("timer resumed");
         }
 
         private void DisplaySeries(object sender, ElapsedEventArgs e)
         {
             var items = _gameState.Entries.Select(keyValuePair => $"{keyValuePair.Key}:{keyValuePair.Value}").ToList();
-            _outputWriter.WriteLine(string.Join(", ", items));
+            _output.WriteLine(string.Join(", ", items));
         }
     }
 }

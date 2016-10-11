@@ -3,6 +3,7 @@ using FTR.Services;
 using NSubstitute;
 using NUnit.Framework;
 using TestStack.BDDfy;
+using TestStack.BDDfy.Annotations;
 
 namespace FTR.Tests
 {
@@ -12,12 +13,12 @@ namespace FTR.Tests
         [SetUp]
         public void SetUp()
         {
-            _mockConsole = Substitute.For<IOutputWriter>();
+            _mockConsole = Substitute.For<IOutput>();
             _gameState = Substitute.For<IGameState>();
             _testFixture = new UiPrinter(_mockConsole, _gameState);
         }
 
-        private IOutputWriter _mockConsole;
+        private IOutput _mockConsole;
         private UiPrinter _testFixture;
         private IGameState _gameState;
 
